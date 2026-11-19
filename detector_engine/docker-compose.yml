@@ -1,0 +1,257 @@
+name: detector-engine
+
+services: # 定义本项目的全部服务（容器）
+  # ---------- Kafka：KRaft 模式单节点集群（同时充当 broker 与 controller，无需 ZooKeeper） ----------
+  kafka:
+    image: apache/kafka:latest                       # 使用 Apache Kafka 官方镜像
+    ports:
+      - "9092:9092"                                  # 将宿主机 9092 映射到容器 HOST 监听端口，供本机客户端访问
+    environment:
+      KAFKA_NODE_ID: 1                               # 节点唯一 ID
+      KAFKA_PROCESS_ROLES: broker,controller         # 该节点同时承担消息代理与集群控制器角色
+      KAFKA_LISTENERS: INTERNAL://:29092,HOST://:9092,CONTROLLER://:9093  # 监听器定义：容器内互通 / 宿主机访问 / 控制器选举
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,HOST://localhost:9092  # 对外公布的连接地址，客户端据此回连
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,HOST:PLAINTEXT  # 各监听器使用的安全协议（此处均为明文）
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL     # broker 之间通信使用的监听器
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER    # 控制器选举与元数据通信使用的监听器
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093   # 控制器选举成员（节点ID@主机:端口），单节点集群
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1      # __consumer_offsets 主题副本数，单节点只能为 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1  # 事务状态日志主题副本数
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1         # 事务状态日志的最小同步副本数
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0      # 消费者组首次重平衡延迟，设为 0 以加快启动
+      KAFKA_NUM_PARTITIONS: 3                        # 自动创建主题时的默认分区数
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:29092 --list >/dev/null 2>&1" ]  # 能成功列出主题即视为就绪
+      interval: 5s                                   # 每 5 秒探测一次
+      timeout: 5s                                    # 单次探测超时 5 秒
+      retries: 20                                    # 连续失败 20 次后标记为 unhealthy
+  #    profiles: [ "l1" ]
+
+
+  # ---------- Kafka UI：Web 管理界面，用于查看主题、消息与消费者组 ----------
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest    # Kafka UI 镜像（Kafbat 社区版）
+    container_name: kafka-ui                 # 固定容器名，便于访问与管理
+    ports:
+      - "127.0.0.1:8080:8080"                # 仅绑定本机回环地址，浏览器访问 http://localhost:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local           # 集群显示名称
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092  # 通过容器网络连接 Kafka 的 INTERNAL 监听器
+    depends_on:
+      kafka:
+        condition: service_healthy           # 等 Kafka 健康检查通过后再启动
+    restart: unless-stopped                  # 除手动停止外，异常退出时自动重启
+  #    profiles: [ "l1" ]
+
+
+  # ---------- 一次性初始化容器：创建所有业务主题后退出 ----------
+  kafka-init:
+    image: apache/kafka:latest            # 复用 Kafka 镜像，仅为使用其自带的命令行工具
+    depends_on:
+      kafka:
+        condition: service_healthy        # 等 Kafka 健康检查通过后再执行初始化
+    # 依次创建以下主题（--if-not-exists 保证重复执行安全）：
+    command:
+      - /bin/sh                           # 用 shell 执行命令
+      - -c                                # 将下一条字符串作为脚本执行
+      - >-                                # 多行命令合并为一行，换行被折叠为空格
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic l1-aligned-windows --partitions 3 --replication-factor 1 --config cleanup.policy=compact &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic l2-anomaly-events --partitions 3 --replication-factor 1 --config cleanup.policy=compact &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic l25-iforest-events --partitions 3 --replication-factor 1 --config cleanup.policy=compact &&
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --create --if-not-exists --topic l4-anomaly-decisions --partitions 3 --replication-factor 1 --config cleanup.policy=compact
+  #    profiles: [ "l1" ]
+
+  # ---------- L1 回放服务：HTTP 仅控制任务，窗口数据经 Kafka 发送 ----------
+  l1-replay:
+    build:
+      context: ./L2-stream
+      dockerfile: l1_stream_simulator/Dockerfile
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      L1_OUTPUT_TOPIC: l1-aligned-windows
+      L1_REPLAY_FILE: /app/data/l1_windows.jsonl
+      L1_REPLAY_PORT: 8091
+    volumes:
+      - ./L2-stream/L1生成结果/l1_windows.jsonl:/app/data/l1_windows.jsonl:ro
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8091/health', timeout=2)" ]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+  #    profiles: [ "l1" ]
+
+
+  # ---------- Flink JobManager：提交并调度 L2 规则引擎作业 ----------
+  jobmanager:
+    build: ./L2-stream/l2-rule-engine      # 使用 l2-rule-engine 目录下的 Dockerfile 构建镜像
+    env_file:
+      - ./L2-stream/config/l2/rules.env    # 加载 L2 规则配置（阈值等）
+    ports:
+      - "8081:8081"                             # Flink Web UI / REST API 端口
+    command: standalone-job --job-classname l2.L2Application  # 以 standalone 模式提交并运行作业主类
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092      # Kafka 地址（容器网络内）
+      L1_OUTPUT_TOPIC: l1-aligned-windows        # 输入主题：L1 对齐窗口
+      L2_OUTPUT_TOPIC: l2-anomaly-events        # 输出主题：L2 异常事件
+      L2_GROUP_ID: l2-group-1                   # Kafka 消费者组 ID
+      L2_PRINT_RESULTS: "true"                  # 是否在日志中打印计算结果
+      POSTGRES_HOST: postgres                    # L2 窗口审计数据库主机
+      POSTGRES_PORT: "5432"                     # L2 窗口审计数据库端口
+      POSTGRES_DB: anomaly_db                    # L2 窗口审计数据库名称
+      POSTGRES_USER: qingtian                    # L2 窗口审计数据库用户
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}"
+      # Flink 配置（等价于写入 flink-conf.yaml）：
+      #   jobmanager.rpc.address             JobManager RPC 地址
+      #   parallelism.default                默认并行度
+      #   execution.checkpointing.storage    检查点存储类型
+      #   execution.checkpointing.dir        检查点存放路径
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jobmanager
+        parallelism.default: 1
+        execution.checkpointing.storage: filesystem
+        execution.checkpointing.dir: file:///tmp/flink-checkpoints
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully  # 等主题创建完成后启动
+      postgres:
+        condition: service_healthy                 # 数据库就绪后启动 L2 作业
+  #    profiles: [ "l2" ]
+
+  # ---------- Flink TaskManager：执行作业的实际计算任务 ----------
+  taskmanager:
+    build: ./L2-stream/l2-rule-engine      # 与 JobManager 使用同一镜像
+    command: taskmanager                        # 以 TaskManager 角色启动
+    environment:
+      # Flink 配置：
+      #   jobmanager.rpc.address             JobManager RPC 地址
+      #   taskmanager.numberOfTaskSlots      每个 TaskManager 提供的任务槽数量
+      #   parallelism.default                默认并行度
+      FLINK_PROPERTIES: |
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 4
+        parallelism.default: 1
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: anomaly_db
+      POSTGRES_USER: qingtian
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}"
+    depends_on:
+      - jobmanager                              # 依赖 JobManager 启动
+  #    profiles: [ "l2" ]
+
+  # ---------- 可视化看板：展示实时事件与规则状态 ----------
+  dashboard:
+    build: ./L2-stream/dashboard          # 使用 dashboard 目录下的 Dockerfile 构建镜像
+    ports:
+      - "127.0.0.1:8090:8090"                 # 仅本机可访问的看板端口
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092        # Kafka 地址（容器网络内）
+      FLINK_REST_URL: http://jobmanager:8081      # Flink REST API 地址，用于查询作业状态
+      RULES_CONFIG_FILE: /app/config/rules.env    # 容器内 L2 规则配置文件
+      L1_REPLAY_URL: http://l1-replay:8091        # L1 回放控制接口
+    volumes:
+      - ./L2-stream/config/l2/rules.env:/app/config/rules.env # 修改阈值后重启 L2 作业生效
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully  # 等主题创建完成后启动
+      jobmanager:
+        condition: service_started                # 等 JobManager 启动后启动
+      l1-replay:
+        condition: service_started                # Dashboard 仅调用回放控制接口
+  #    profiles: [ "l2" ]
+
+  # ---------- PostgreSQL：业务数据持久化数据库 ----------
+  postgres:
+    image: postgres:17                    # 使用 PostgreSQL 17 官方镜像
+    container_name: postgres              # 固定容器名，便于容器间通过该名称访问
+    restart: unless-stopped               # 除手动停止外，容器异常退出时自动重启
+    environment:
+      POSTGRES_USER: qingtian             # 初始化超级用户名（仅首次启动时生效）
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}"
+      POSTGRES_DB: anomaly_db             # 自动创建的默认数据库名
+    ports:
+      - "127.0.0.1:5432:5432"             # 仅绑定本机回环地址，宿主机 5432 映射到容器 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # 命名卷挂载到数据目录，实现数据持久化
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U qingtian -d anomaly_db" ]  # 探测数据库是否可接受连接
+      interval: 10s                       # 每 10 秒检查一次
+      timeout: 5s                         # 单次检查超时 5 秒
+      retries: 5                          # 连续失败 5 次后标记为 unhealthy
+
+
+  # --------- pgAdmin 4：PostgreSQL 可视化管理界面 ---------
+  pgadmin:
+    image: dpage/pgadmin4                    # 使用 pgAdmin 4 官方镜像
+    container_name: pgadmin                  # 固定容器名，方便管理
+    restart: unless-stopped                 # 除手动停止外，容器退出后自动重启
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com  # pgAdmin 网页登录邮箱
+      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD:?Set PGADMIN_DEFAULT_PASSWORD in .env}"
+    ports:
+      - "127.0.0.1:5050:80"                  # 仅允许本机访问，映射到容器 80 端口
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin        # 持久化 pgAdmin 配置及连接信息
+    depends_on:
+      postgres:
+        condition: service_healthy           # PostgreSQL 健康检查通过后再启动
+
+  # --------- L4 规则引擎：基于 Typesafe 的决策服务 ----------
+  l4-jev:
+    build:
+      context: ./L4-Jev
+      dockerfile: Dockerfile
+    env_file:
+      - ./L4-Jev/.env
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      L4_CONSUMER_TOPIC: l25-iforest-events
+      L4_PRODUCER_TOPIC: l4-anomaly-decisions
+      L4_GROUP_ID: l4-group-1
+      L4_AUTO_OFFSET_RESET: earliest
+      L4_DIAGNOSIS_THRESHOLD: 0.8            # 诊断阈值，超过该值则判定为异常
+      POSTGRES_HOST: postgres                 # 未过阈值事件审计数据库主机
+      POSTGRES_PORT: "5432"                  # 未过阈值事件审计数据库端口
+      POSTGRES_DB: anomaly_db                 # 未过阈值事件审计数据库名称
+      POSTGRES_USER: qingtian                 # 未过阈值事件审计数据库用户
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}"
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./L4-Jev/laya_predict/models:/app/laya_predict/models:rw
+
+  #    profiles: [ "l4" ]
+
+  # --------- L2 IForest：基于 Isolation Forest 的异常检测服务 ----------
+  l2-iforest:
+    build:
+      context: ./L2-iforest
+      dockerfile: Dockerfile
+    environment:
+      L25_INPUT_TOPIC: l2-anomaly-events
+      L25_OUTPUT_TOPIC: l25-iforest-events
+      L25_GROUP_ID: l25-group-1
+      L25_AUTO_OFFSET_RESET: earliest
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+    env_file:
+      - ./L2-iforest/.env
+    restart: unless-stopped
+#    profiles: [ "l25" ]
+
+
+volumes: # 顶层命名卷声明，供各服务挂载
+  postgres_data:                          # 声明命名卷，由 Docker 管理实际存储位置
+  pgadmin_data:                           # 声明命名卷，由 Docker 管理实际存储位置
+
+
+# l1->l2->l25->l4

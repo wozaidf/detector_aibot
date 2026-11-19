@@ -1,0 +1,2 @@
+L4-Jev/laya_predict/models/out5-multi/model.safetensors filter=lfs diff=lfs merge=lfs -text
+L4-Jev/laya_predict/models/out5-multi/checkpoint_latest/model.safetensors filter=lfs diff=lfs merge=lfs -text

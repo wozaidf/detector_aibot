@@ -1,0 +1,14 @@
+{
+  "single": {
+    "delta_bytes": 1987,
+    "version_2_0_bytes": 1020,
+    "version_2_1_bytes": 3007,
+    "ratio": 2.9480392156862747
+  },
+  "cep": {
+    "delta_bytes": 5377,
+    "version_2_0_bytes": 4045,
+    "version_2_1_bytes": 9422,
+    "ratio": 2.3292954264524104
+  }
+}

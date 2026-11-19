@@ -1,0 +1,661 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:detector-engine:anomaly-event",
+  "title": "Unified anomaly event emitted by L2",
+  "description": "Top-level envelope is shared by detection stages. This L2 producer populates original_data and l2_result; downstream results are null.",
+  "type": "object",
+  "required": [
+    "event_id",
+    "event_type",
+    "stage",
+    "entity_id",
+    "entity_type",
+    "created_at",
+    "updated_at",
+    "original_data",
+    "l2_result",
+    "l25_result",
+    "l4_result"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "event_type": {
+      "const": "ANOMALY_EVENT"
+    },
+    "stage": {
+      "const": "L2"
+    },
+    "entity_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entity_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "L2 输出异常事件时生成"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "本次 L2 输出处理完成时间"
+    },
+    "original_data": {
+      "type": "object",
+      "required": [
+        "feature_schema_version",
+        "source_refs",
+        "window_snapshots"
+      ],
+      "properties": {
+        "feature_schema_version": {
+          "const": "l1-window-features-v1"
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceRef"
+          }
+        },
+        "window_snapshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/windowSnapshot"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "l2_result": {
+      "type": "object",
+      "required": [
+        "anomaly",
+        "anomaly_type",
+        "severity",
+        "start_time",
+        "end_time",
+        "detected_at",
+        "detection_sources",
+        "matched_rules",
+        "matched_window_ids",
+        "source_event_ids",
+        "evidence",
+        "source_evidence",
+        "merge_status",
+        "decision_reason",
+        "decision",
+        "window_count",
+        "quality_status",
+        "payload_quality"
+      ],
+      "properties": {
+        "anomaly": {
+          "type": "boolean"
+        },
+        "anomaly_type": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string"
+        },
+        "start_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "detected_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "detection_sources": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "DROOLS_WINDOW",
+              "FLINK_CEP"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "matched_rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "matched_window_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "source_event_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "evidence": {
+          "type": "object"
+        },
+        "source_evidence": {
+          "type": "object"
+        },
+        "merge_status": {
+          "type": "string"
+        },
+        "decision_reason": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "object",
+          "required": [
+            "anomaly",
+            "suppressed",
+            "action",
+            "reason"
+          ],
+          "properties": {
+            "anomaly": {
+              "type": "boolean"
+            },
+            "suppressed": {
+              "type": "boolean"
+            },
+            "action": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "window_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "quality_status": {
+          "type": "string"
+        },
+        "payload_quality": {
+          "type": "object",
+          "required": [
+            "snapshot_status",
+            "missing_window_ids",
+            "feature_warnings",
+            "snapshot_conflicts",
+            "snapshot_warnings"
+          ],
+          "properties": {
+            "snapshot_status": {
+              "enum": [
+                "COMPLETE",
+                "INCOMPLETE",
+                "CONFLICT"
+              ]
+            },
+            "missing_window_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "feature_warnings": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/warning"
+              }
+            },
+            "snapshot_warnings": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/warning"
+              }
+            },
+            "snapshot_conflicts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "entity_id",
+                  "window_id",
+                  "content_sha256s"
+                ],
+                "properties": {
+                  "entity_id": {
+                    "type": "string"
+                  },
+                  "window_id": {
+                    "type": "string"
+                  },
+                  "content_sha256s": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "minItems": 2,
+                    "uniqueItems": true
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "l25_result": {
+      "type": "null"
+    },
+    "l4_result": {
+      "type": "null"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sourceRef": {
+      "type": "object",
+      "required": [
+        "topic",
+        "window_id",
+        "content_sha256"
+      ],
+      "properties": {
+        "topic": {
+          "type": "string",
+          "minLength": 1
+        },
+        "window_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "warning": {
+      "type": "object",
+      "required": [
+        "window_id",
+        "path",
+        "reason"
+      ],
+      "properties": {
+        "window_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "windowSnapshot": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "record_type",
+        "window_id",
+        "entity_id",
+        "entity_type",
+        "window",
+        "features",
+        "quality",
+        "context",
+        "relation_statistics",
+        "source_ref"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string"
+        },
+        "record_type": {
+          "const": "aligned_window"
+        },
+        "window_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_type": {
+          "type": "string"
+        },
+        "window": {
+          "type": "object",
+          "required": [
+            "start",
+            "end",
+            "size_sec",
+            "slide_sec"
+          ],
+          "properties": {
+            "start": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "end": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "size_sec": {
+              "type": "integer"
+            },
+            "slide_sec": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": true
+        },
+        "features": {
+          "type": "object",
+          "description": "原特征树不做数值转换；缺失、null 或非数值在 payload_quality 中说明，COMPLETE 分支再要求全部模型字段为数值。"
+        },
+        "quality": {
+          "type": "object"
+        },
+        "context": {
+          "type": "object"
+        },
+        "relation_statistics": {
+          "type": "object"
+        },
+        "source_ref": {
+          "$ref": "#/$defs/sourceRef"
+        }
+      },
+      "additionalProperties": false
+    },
+    "completeFeatures": {
+      "type": "object",
+      "required": [
+        "metrics",
+        "logs",
+        "traces",
+        "alarms"
+      ],
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "required": [
+            "cpu_mean_pct",
+            "cpu_max_pct",
+            "memory_mean_pct",
+            "memory_max_pct",
+            "latency_mean_ms",
+            "latency_max_ms",
+            "packet_loss_mean_ratio",
+            "network_traffic_mean_mbps",
+            "bandwidth_utilization_mean_pct"
+          ],
+          "properties": {
+            "cpu_mean_pct": {
+              "type": "number",
+              "description": "metrics_cpu_mean_pct; percent; 原窗口 CPU 均值"
+            },
+            "cpu_max_pct": {
+              "type": "number",
+              "description": "metrics_cpu_max_pct; percent; 原窗口 CPU 最大值"
+            },
+            "memory_mean_pct": {
+              "type": "number",
+              "description": "metrics_memory_mean_pct; percent; 原窗口内存均值"
+            },
+            "memory_max_pct": {
+              "type": "number",
+              "description": "metrics_memory_max_pct; percent; 原窗口内存最大值"
+            },
+            "latency_mean_ms": {
+              "type": "number",
+              "description": "metrics_latency_mean_ms; ms; 原窗口延迟均值"
+            },
+            "latency_max_ms": {
+              "type": "number",
+              "description": "metrics_latency_max_ms; ms; 原窗口延迟最大值"
+            },
+            "packet_loss_mean_ratio": {
+              "type": "number",
+              "description": "metrics_packet_loss_mean_ratio; ratio; 原窗口丢包比例均值"
+            },
+            "network_traffic_mean_mbps": {
+              "type": "number",
+              "description": "metrics_network_traffic_mean_mbps; Mbps; 原窗口网络流量均值"
+            },
+            "bandwidth_utilization_mean_pct": {
+              "type": "number",
+              "description": "metrics_bandwidth_utilization_mean_pct; percent; 原窗口带宽利用率均值"
+            }
+          },
+          "additionalProperties": true
+        },
+        "logs": {
+          "type": "object",
+          "required": [
+            "total_per_minute",
+            "error_rate",
+            "warn_rate",
+            "info_rate",
+            "error_trace_match_ratio"
+          ],
+          "properties": {
+            "total_per_minute": {
+              "type": "number",
+              "description": "logs_total_per_minute; count/min; 原窗口日志数除以窗口分钟数"
+            },
+            "error_rate": {
+              "type": "number",
+              "description": "logs_error_rate; ratio; 原窗口 ERROR 日志数除以日志总数"
+            },
+            "warn_rate": {
+              "type": "number",
+              "description": "logs_warn_rate; ratio; 原窗口 WARN 日志数除以日志总数"
+            },
+            "info_rate": {
+              "type": "number",
+              "description": "logs_info_rate; ratio; 原窗口 INFO 日志数除以日志总数"
+            },
+            "error_trace_match_ratio": {
+              "type": "number",
+              "description": "logs_error_trace_match_ratio; ratio; 原窗口可关联 Trace 的 ERROR 日志比例"
+            }
+          },
+          "additionalProperties": true
+        },
+        "traces": {
+          "type": "object",
+          "required": [
+            "span_per_minute",
+            "failed_span_per_minute",
+            "span_error_rate",
+            "avg_duration_ms",
+            "max_duration_ms"
+          ],
+          "properties": {
+            "span_per_minute": {
+              "type": "number",
+              "description": "traces_span_per_minute; count/min; 原窗口 Span 数除以窗口分钟数"
+            },
+            "failed_span_per_minute": {
+              "type": "number",
+              "description": "traces_failed_span_per_minute; count/min; 原窗口失败 Span 数除以窗口分钟数"
+            },
+            "span_error_rate": {
+              "type": "number",
+              "description": "traces_span_error_rate; ratio; 原窗口失败 Span 数除以 Span 总数"
+            },
+            "avg_duration_ms": {
+              "type": "number",
+              "description": "traces_avg_duration_ms; ms; 原窗口 Span 耗时均值"
+            },
+            "max_duration_ms": {
+              "type": "number",
+              "description": "traces_max_duration_ms; ms; 原窗口 Span 耗时最大值"
+            }
+          },
+          "additionalProperties": true
+        },
+        "alarms": {
+          "type": "object",
+          "required": [
+            "alarm_per_minute",
+            "critical_rate",
+            "major_rate",
+            "minor_rate"
+          ],
+          "properties": {
+            "alarm_per_minute": {
+              "type": "number",
+              "description": "alarms_alarm_per_minute; count/min; 原窗口告警数除以窗口分钟数"
+            },
+            "critical_rate": {
+              "type": "number",
+              "description": "alarms_critical_rate; ratio; 原窗口 critical 告警比例"
+            },
+            "major_rate": {
+              "type": "number",
+              "description": "alarms_major_rate; ratio; 原窗口 major 告警比例"
+            },
+            "minor_rate": {
+              "type": "number",
+              "description": "alarms_minor_rate; ratio; 原窗口 minor 告警比例"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "l2_result": {
+            "properties": {
+              "payload_quality": {
+                "properties": {
+                  "snapshot_status": {
+                    "const": "COMPLETE"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "entity_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "original_data": {
+            "properties": {
+              "window_snapshots": {
+                "minItems": 1,
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/windowSnapshot"
+                    },
+                    {
+                      "properties": {
+                        "features": {
+                          "$ref": "#/$defs/completeFeatures"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "l2_result": {
+            "properties": {
+              "window_count": {
+                "minimum": 1
+              },
+              "payload_quality": {
+                "properties": {
+                  "missing_window_ids": {
+                    "maxItems": 0
+                  },
+                  "feature_warnings": {
+                    "maxItems": 0
+                  },
+                  "snapshot_warnings": {
+                    "maxItems": 0
+                  },
+                  "snapshot_conflicts": {
+                    "maxItems": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "l2_result": {
+            "properties": {
+              "payload_quality": {
+                "properties": {
+                  "snapshot_status": {
+                    "const": "CONFLICT"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "l2_result": {
+            "properties": {
+              "payload_quality": {
+                "properties": {
+                  "snapshot_conflicts": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+# ==================== 操作系统和编辑器 ====================
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# ==================== Python ====================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+build/
+dist/
+
+# ==================== Java / Maven / Flink ====================
+target/
+*.class
+*.jar.original
+hs_err_pid*
+replay_pid*
+.classpath
+.project
+.settings/
+
+# ==================== 本地配置和密钥 ====================
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# L2 的 rules.env 是项目规则配置，需要提交，不在忽略范围内。
+
+# ==================== 日志、缓存和临时文件 ====================
+*.log
+logs/
+log/
+tmp/
+temp/
+*.tmp
+*.bak
+*.pid
+*.pid.lock
+
+# ==================== 模型训练和实验产物 ====================
+L2-iforest-training/artifacts/
+L2-iforest-training/**/artifacts/
+mlruns/
+wandb/
+
+# 推理服务使用的 L2-iforest/models/ 不忽略，保证 Docker 构建可取得模型。
+
+# Laya 模型体积较大，由部署环境单独提供。
+L4-Jev/laya_predict/models/
+L4-Jev/test
+L4-Jev/data
+
+# ==================== 本地输出和覆盖配置 ====================
+output/
+outputs/
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# ==================== PostgreSQL / pgAdmin 本地数据 ====================
+postgres_data/
+pgadmin_data/
+data/postgres/
+data/pgadmin/
+
+# ==================== 测试与工具缓存 ====================
+.cache/
+.hypothesis/
+.ipynb_checkpoints/
+coverage.xml
+junit.xml

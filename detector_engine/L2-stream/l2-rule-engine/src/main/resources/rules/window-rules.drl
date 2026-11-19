@@ -1,0 +1,79 @@
+package rules;
+
+import l2.model.AlignedWindow;
+import l2.model.DetectionCandidate;
+import l2.config.RuleThresholds;
+import l2.rules.RuleActions;
+global java.util.List results;
+global java.util.Set markers;
+
+// Ordinary single-metric limits mark the window and remain available to CEP.
+rule "MARK_CPU_HIGH"
+when $t: RuleThresholds() $w: AlignedWindow(cpuMeanPct == cpuMeanPct, cpuMeanPct >= $t.cpuHighPct)
+then markers.add(RuleActions.mark("CPU_HIGH")); end
+
+rule "MARK_MEMORY_HIGH"
+when $t: RuleThresholds() $w: AlignedWindow(memoryMeanPct == memoryMeanPct, memoryMeanPct >= $t.memoryHighPct)
+then markers.add(RuleActions.mark("MEMORY_HIGH")); end
+
+rule "MARK_LATENCY_HIGH"
+when $t: RuleThresholds() $w: AlignedWindow(latencyMeanMs == latencyMeanMs, latencyMeanMs >= $t.latencyHighMs)
+then markers.add(RuleActions.mark("LATENCY_HIGH")); end
+
+rule "MARK_PACKET_LOSS_HIGH"
+when $t: RuleThresholds() $w: AlignedWindow(packetLossMeanRatio == packetLossMeanRatio, packetLossMeanRatio >= $t.packetLossHighRatio)
+then markers.add(RuleActions.mark("PACKET_LOSS_HIGH")); end
+
+rule "MARK_LOG_ERROR_RATE_HIGH"
+when $t: RuleThresholds() $w: AlignedWindow(errorRate >= $t.logErrorRate)
+then markers.add(RuleActions.mark("LOG_ERROR_RATE_HIGH")); end
+
+rule "MARK_SPAN_FAILURE_RATE_HIGH"
+when $t: RuleThresholds() $w: AlignedWindow(spanFailureRate >= $t.spanFailureRate)
+then markers.add(RuleActions.mark("SPAN_FAILURE_RATE_HIGH")); end
+
+rule "MARK_REPEATED_ERRORS"
+when $t: RuleThresholds() $w: AlignedWindow(errorCount >= $t.repeatedErrorCount)
+then markers.add(RuleActions.mark("REPEATED_ERRORS")); end
+
+rule "MARK_ALARM_PRESENT"
+when $w: AlignedWindow(alarmCount > 0)
+then markers.add(RuleActions.mark("ALARM_PRESENT")); end
+
+// Severe single-metric breaches create a candidate; ordinary breaches above only mark.
+rule "WINDOW_CPU_SEVERE"
+when $t: RuleThresholds() $w: AlignedWindow(cpuMeanPct == cpuMeanPct, cpuMeanPct >= $t.cpuSeverePct)
+then results.add(RuleActions.single($w, "CPU_HIGH", "WINDOW_CPU_SEVERE", "critical")); end
+
+rule "WINDOW_MEMORY_SEVERE"
+when $t: RuleThresholds() $w: AlignedWindow(memoryMeanPct == memoryMeanPct, memoryMeanPct >= $t.memorySeverePct)
+then results.add(RuleActions.single($w, "MEMORY_HIGH", "WINDOW_MEMORY_SEVERE", "critical")); end
+
+rule "WINDOW_LATENCY_SEVERE"
+when $t: RuleThresholds() $w: AlignedWindow(latencyMeanMs == latencyMeanMs, latencyMeanMs >= $t.latencySevereMs)
+then results.add(RuleActions.single($w, "NETWORK_DEGRADATION", "WINDOW_LATENCY_SEVERE", "critical")); end
+
+rule "WINDOW_PACKET_LOSS_SEVERE"
+when $t: RuleThresholds() $w: AlignedWindow(packetLossMeanRatio == packetLossMeanRatio, packetLossMeanRatio >= $t.packetLossSevereRatio)
+then results.add(RuleActions.single($w, "NETWORK_DEGRADATION", "WINDOW_PACKET_LOSS_SEVERE", "critical")); end
+
+rule "WINDOW_LOG_ERROR_SEVERE"
+when $t: RuleThresholds() $w: AlignedWindow(errorRate >= $t.logErrorSevereRate)
+then results.add(RuleActions.single($w, "LOG_TRACE_CORRELATION", "WINDOW_LOG_ERROR_SEVERE", "critical")); end
+
+rule "WINDOW_SPAN_FAILURE_SEVERE"
+when $t: RuleThresholds() $w: AlignedWindow(spanFailureRate >= $t.spanFailureSevereRate)
+then results.add(RuleActions.single($w, "LOG_TRACE_CORRELATION", "WINDOW_SPAN_FAILURE_SEVERE", "critical")); end
+
+// Existing multi-signal rules are preserved.
+rule "WINDOW_NETWORK_DEGRADATION"
+when $t: RuleThresholds() $w: AlignedWindow(latencyMeanMs == latencyMeanMs, latencyMeanMs >= $t.jointNetworkLatencyMs, packetLossMeanRatio >= $t.jointNetworkPacketLossRatio)
+then results.add(RuleActions.single($w, "NETWORK_DEGRADATION", "WINDOW_NETWORK_DEGRADATION", "major")); end
+
+rule "WINDOW_LOG_TRACE_CORRELATION"
+when $t: RuleThresholds() $w: AlignedWindow(errorRate >= $t.jointLogErrorRate, spanFailureRate >= $t.jointSpanFailureRate, overlapCount >= $t.jointLogTraceMinOverlapCount)
+then results.add(RuleActions.single($w, "LOG_TRACE_CORRELATION", "WINDOW_LOG_TRACE_CORRELATION", "critical")); end
+
+rule "WINDOW_MULTI_SIGNAL_ALARM"
+when $t: RuleThresholds() $w: AlignedWindow(cpuMeanPct >= $t.jointMultiCpuPct, failedSpanCount >= $t.jointMultiMinFailedSpanCount, alarmCount >= $t.jointMultiMinAlarmCount)
+then results.add(RuleActions.single($w, "MULTI_SIGNAL_ALARM", "WINDOW_MULTI_SIGNAL_ALARM", "critical")); end

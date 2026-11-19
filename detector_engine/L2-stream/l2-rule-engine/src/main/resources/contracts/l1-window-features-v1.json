@@ -1,0 +1,29 @@
+{
+  "version": "l1-window-features-v1",
+  "description": "L2 新声明的原窗口特征契约；对应当前 IForest 的 23 列，不表示 L1 或模型包原有版本字段。",
+  "features": [
+    {"column":"metrics_cpu_mean_pct","path":"/features/metrics/cpu_mean_pct","unit":"percent","meaning":"原窗口 CPU 均值"},
+    {"column":"metrics_cpu_max_pct","path":"/features/metrics/cpu_max_pct","unit":"percent","meaning":"原窗口 CPU 最大值"},
+    {"column":"metrics_memory_mean_pct","path":"/features/metrics/memory_mean_pct","unit":"percent","meaning":"原窗口内存均值"},
+    {"column":"metrics_memory_max_pct","path":"/features/metrics/memory_max_pct","unit":"percent","meaning":"原窗口内存最大值"},
+    {"column":"metrics_latency_mean_ms","path":"/features/metrics/latency_mean_ms","unit":"ms","meaning":"原窗口延迟均值"},
+    {"column":"metrics_latency_max_ms","path":"/features/metrics/latency_max_ms","unit":"ms","meaning":"原窗口延迟最大值"},
+    {"column":"metrics_packet_loss_mean_ratio","path":"/features/metrics/packet_loss_mean_ratio","unit":"ratio","meaning":"原窗口丢包比例均值"},
+    {"column":"metrics_network_traffic_mean_mbps","path":"/features/metrics/network_traffic_mean_mbps","unit":"Mbps","meaning":"原窗口网络流量均值"},
+    {"column":"metrics_bandwidth_utilization_mean_pct","path":"/features/metrics/bandwidth_utilization_mean_pct","unit":"percent","meaning":"原窗口带宽利用率均值"},
+    {"column":"logs_total_per_minute","path":"/features/logs/total_per_minute","unit":"count/min","meaning":"原窗口日志数除以窗口分钟数"},
+    {"column":"logs_error_rate","path":"/features/logs/error_rate","unit":"ratio","meaning":"原窗口 ERROR 日志数除以日志总数"},
+    {"column":"logs_warn_rate","path":"/features/logs/warn_rate","unit":"ratio","meaning":"原窗口 WARN 日志数除以日志总数"},
+    {"column":"logs_info_rate","path":"/features/logs/info_rate","unit":"ratio","meaning":"原窗口 INFO 日志数除以日志总数"},
+    {"column":"logs_error_trace_match_ratio","path":"/features/logs/error_trace_match_ratio","unit":"ratio","meaning":"原窗口可关联 Trace 的 ERROR 日志比例"},
+    {"column":"traces_span_per_minute","path":"/features/traces/span_per_minute","unit":"count/min","meaning":"原窗口 Span 数除以窗口分钟数"},
+    {"column":"traces_failed_span_per_minute","path":"/features/traces/failed_span_per_minute","unit":"count/min","meaning":"原窗口失败 Span 数除以窗口分钟数"},
+    {"column":"traces_span_error_rate","path":"/features/traces/span_error_rate","unit":"ratio","meaning":"原窗口失败 Span 数除以 Span 总数"},
+    {"column":"traces_avg_duration_ms","path":"/features/traces/avg_duration_ms","unit":"ms","meaning":"原窗口 Span 耗时均值"},
+    {"column":"traces_max_duration_ms","path":"/features/traces/max_duration_ms","unit":"ms","meaning":"原窗口 Span 耗时最大值"},
+    {"column":"alarms_alarm_per_minute","path":"/features/alarms/alarm_per_minute","unit":"count/min","meaning":"原窗口告警数除以窗口分钟数"},
+    {"column":"alarms_critical_rate","path":"/features/alarms/critical_rate","unit":"ratio","meaning":"原窗口 critical 告警比例"},
+    {"column":"alarms_major_rate","path":"/features/alarms/major_rate","unit":"ratio","meaning":"原窗口 major 告警比例"},
+    {"column":"alarms_minor_rate","path":"/features/alarms/minor_rate","unit":"ratio","meaning":"原窗口 minor 告警比例"}
+  ]
+}

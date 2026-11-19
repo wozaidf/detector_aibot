@@ -1,0 +1,162 @@
+{
+  "event_id": "L2-30DC64468209B3A49BF1",
+  "event_type": "ANOMALY_EVENT",
+  "stage": "L2",
+  "entity_id": "contract-server",
+  "entity_type": "virtual_machine",
+  "created_at": "2026-10-28T00:00:00Z",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "original_data": {
+    "feature_schema_version": "l1-window-features-v1",
+    "source_refs": [
+      {
+        "topic": "l1-aligned-windows",
+        "window_id": "WIN-CONTRACT-001",
+        "content_sha256": "5bd36fcc703bbab2741bad0f613ed1593410d9506fa5ea97a868c94748b08137"
+      }
+    ],
+    "window_snapshots": [
+      {
+        "schema_version": "1.0",
+        "record_type": "aligned_window",
+        "window_id": "WIN-CONTRACT-001",
+        "entity_id": "contract-server",
+        "entity_type": "virtual_machine",
+        "window": {
+          "start": "2026-10-09T09:00:00Z",
+          "end": "2026-10-09T09:05:00Z",
+          "size_sec": 300,
+          "slide_sec": 60
+        },
+        "features": {
+          "metrics": {
+            "cpu_mean_pct": 96,
+            "cpu_max_pct": 99,
+            "memory_mean_pct": 70,
+            "memory_max_pct": 75,
+            "latency_mean_ms": 50,
+            "latency_max_ms": 65,
+            "packet_loss_mean_ratio": 0.001,
+            "network_traffic_mean_mbps": 300,
+            "bandwidth_utilization_mean_pct": 30
+          },
+          "logs": {
+            "total_count": 7,
+            "total_per_minute": 1.4,
+            "error_count": 0,
+            "error_rate": 0,
+            "warn_count": 0,
+            "warn_rate": 0,
+            "info_count": 7,
+            "info_rate": 1,
+            "error_trace_match_ratio": 0
+          },
+          "traces": {
+            "span_count": 10,
+            "span_per_minute": 2,
+            "failed_span_count": 0,
+            "failed_span_per_minute": 0,
+            "span_error_rate": 0,
+            "avg_duration_ms": 80,
+            "max_duration_ms": 120
+          },
+          "alarms": {
+            "alarm_count": 0,
+            "alarm_per_minute": 0,
+            "critical_count": 0,
+            "critical_rate": 0,
+            "major_count": 0,
+            "major_rate": 0,
+            "minor_count": 0,
+            "minor_rate": 0
+          }
+        },
+        "quality": {
+          "status": "complete",
+          "metrics_status": "complete",
+          "logs_status": "complete",
+          "traces_status": "complete",
+          "alarms_status": "complete",
+          "sample_counts": {
+            "metrics": 10,
+            "logs": 7,
+            "spans": 10,
+            "alarms": 0
+          },
+          "missing_features": []
+        },
+        "context": {
+          "active_ticket_ids": [
+            "TEST-TICKET-1"
+          ],
+          "active_change_ids": [],
+          "maintenance_active": false,
+          "related_entity_ids": [
+            "contract-server",
+            "contract-database"
+          ]
+        },
+        "relation_statistics": {
+          "error_failed_trace_overlap_count": 0,
+          "matched_error_log_count": 0,
+          "matched_failed_span_count": 0,
+          "error_log_match_ratio": 0
+        },
+        "source_ref": {
+          "topic": "l1-aligned-windows",
+          "window_id": "WIN-CONTRACT-001",
+          "content_sha256": "5bd36fcc703bbab2741bad0f613ed1593410d9506fa5ea97a868c94748b08137"
+        }
+      }
+    ]
+  },
+  "l2_result": {
+    "anomaly": true,
+    "anomaly_type": "CPU_HIGH",
+    "severity": "critical",
+    "start_time": "2026-10-09T09:00:00Z",
+    "end_time": "2026-10-09T09:05:00Z",
+    "detected_at": "2026-10-28T00:00:00Z",
+    "detection_sources": [
+      "DROOLS_WINDOW"
+    ],
+    "matched_rules": [
+      "WINDOW_CPU_SEVERE"
+    ],
+    "matched_window_ids": [
+      "WIN-CONTRACT-001"
+    ],
+    "source_event_ids": [
+      "SRC-735FBCBC062BB655ED9F"
+    ],
+    "evidence": {
+      "cpu_mean_pct": 96,
+      "window_id": "WIN-CONTRACT-001"
+    },
+    "source_evidence": {
+      "DROOLS_WINDOW": {
+        "cpu_mean_pct": 96,
+        "window_id": "WIN-CONTRACT-001"
+      }
+    },
+    "merge_status": "SINGLE_SOURCE",
+    "decision_reason": "single detection branch candidate retained from DROOLS_WINDOW",
+    "decision": {
+      "anomaly": true,
+      "suppressed": false,
+      "action": "ALERT",
+      "reason": "single detection branch candidate retained from DROOLS_WINDOW"
+    },
+    "window_count": 1,
+    "quality_status": "complete",
+    "payload_quality": {
+      "snapshot_status": "COMPLETE",
+      "missing_window_ids": [],
+      "feature_warnings": [],
+      "snapshot_conflicts": [],
+      "snapshot_warnings": []
+    }
+  },
+  "l25_result": null,
+  "l4_result": null
+}

@@ -1,0 +1,40 @@
+[project]
+name = "ai-bot"
+version = "0.1.0"
+description = "基于 LangChain + LangGraph 的基础 Agent"
+requires-python = ">=3.13"
+dependencies = [
+    "langchain>=0.3",
+    "langgraph>=0.6",
+    "langchain-anthropic>=0.3",
+    "pydantic-settings>=2.0",
+    "python-dotenv>=1.0",
+    "langchain-openai>=1.6.2",
+    "fastapi>=0.141.1",
+    "uvicorn>=0.53.0",
+    "fastmcp>=4.1.0",
+    "psutil>=7.2.2",
+    "langchain-mcp-adapters>=0.3.1",
+    "jsonschema>=4.26.0",
+    "neo4j-graphrag[experimental,openai]>=1.24.0",
+    "neo4j>=6.4.1",
+    # L5 RAG 知识库（src/ai_bot/rag，与 knowledge 图谱模块并列）：本地 BGE onnx 推理，不引入 torch
+    "pandas>=2.0",
+    "langchain-chroma>=1.1.0",
+    "chromadb>=1.0",
+    "fastembed>=0.9.1",
+]
+
+[project.scripts]
+ai-bot = "ai_bot.cli:main"
+
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "langgraph-cli>=0.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.16,<0.13.0"]
+build-backend = "uv_build"

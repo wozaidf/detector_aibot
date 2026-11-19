@@ -1,0 +1,19 @@
+package rules;
+
+import l2.model.DetectionCandidate;
+
+rule "DECISION_OVERLAP_DEDUPLICATION" salience 110
+when $c: DetectionCandidate(duplicate == true)
+then $c.setSuppressed(true); $c.setDecision("DUPLICATE_SUPPRESSED"); $c.getMatchedRules().add("DECISION_OVERLAP_DEDUPLICATION"); end
+
+rule "DECISION_MAINTENANCE_SUPPRESSION" salience 100
+when $c: DetectionCandidate(maintenanceActive == true, duplicate == false)
+then $c.setSuppressed(true); $c.setDecision("SUPPRESSED"); $c.setSeverity("info"); $c.getMatchedRules().add("DECISION_MAINTENANCE_SUPPRESSION"); end
+
+rule "DECISION_PARTIAL_QUALITY_REVIEW" salience 50
+when $c: DetectionCandidate(maintenanceActive == false, qualityStatus != "complete", decision == "ALERT")
+then $c.setDecision("REVIEW"); $c.getMatchedRules().add("DECISION_PARTIAL_QUALITY_REVIEW"); end
+
+rule "DECISION_CORRELATED_CRITICAL" salience 40
+when $c: DetectionCandidate(maintenanceActive == false, anomalyType == "LOG_TRACE_CORRELATION" || anomalyType == "MULTI_SIGNAL_ALARM" || anomalyType == "COMPLEX_FAILURE_SEQUENCE")
+then $c.setSeverity("critical"); $c.getMatchedRules().add("DECISION_CORRELATED_CRITICAL"); end

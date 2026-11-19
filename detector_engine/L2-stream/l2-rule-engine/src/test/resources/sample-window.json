@@ -1,0 +1,9 @@
+{
+  "schema_version":"1.0","window_id":"WIN-TEST-001","record_type":"aligned_window","entity_id":"server-001","entity_type":"host",
+  "window":{"start":"2026-10-09T09:00:00Z","end":"2026-10-09T09:05:00Z","size_sec":300,"slide_sec":60},
+  "events":{"metrics":[],"logs":[],"traces":[],"alarms":[]},
+  "features":{"metrics":{"cpu_mean_pct":91.0,"cpu_max_pct":95.0,"memory_mean_pct":70.0,"latency_mean_ms":50.0,"packet_loss_mean_ratio":0.001},"logs":{"error_count":0,"error_rate":0.0},"traces":{"failed_span_count":0,"span_error_rate":0.0},"alarms":{"alarm_count":0,"critical_count":0}},
+  "fusion_features":{"window_level":{"feature_vector":{},"participating_types":[]},"key_level":{"relation_statistics":{"error_failed_trace_overlap_count":0},"relations":[]}},
+  "context":{"active_ticket_ids":[],"active_change_ids":[],"maintenance_active":false,"related_entity_ids":["server-001"]},
+  "quality":{"status":"complete","metrics_status":"complete","logs_status":"complete","traces_status":"complete","alarms_status":"complete","sample_counts":{},"missing_features":[]}
+}

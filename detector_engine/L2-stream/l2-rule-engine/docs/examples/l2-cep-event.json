@@ -1,0 +1,500 @@
+{
+  "event_id": "L2-EE4399FD384CBCBCB733",
+  "event_type": "ANOMALY_EVENT",
+  "stage": "L2",
+  "entity_id": "contract-server",
+  "entity_type": "virtual_machine",
+  "created_at": "2026-10-28T00:00:00Z",
+  "updated_at": "2026-10-28T00:00:00Z",
+  "original_data": {
+    "feature_schema_version": "l1-window-features-v1",
+    "source_refs": [
+      {
+        "topic": "l1-aligned-windows",
+        "window_id": "WIN-CONTRACT-001",
+        "content_sha256": "5bd36fcc703bbab2741bad0f613ed1593410d9506fa5ea97a868c94748b08137"
+      },
+      {
+        "topic": "l1-aligned-windows",
+        "window_id": "WIN-CONTRACT-002",
+        "content_sha256": "4abe0d9f130d7202d057e44bb375d1a9d292d773efb566ac001f8541220eded7"
+      },
+      {
+        "topic": "l1-aligned-windows",
+        "window_id": "WIN-CONTRACT-003",
+        "content_sha256": "c445bf962bc925b6bffabdb83c3a4207216ec5e50d395ff25816f3c2571199b8"
+      }
+    ],
+    "window_snapshots": [
+      {
+        "schema_version": "1.0",
+        "record_type": "aligned_window",
+        "window_id": "WIN-CONTRACT-001",
+        "entity_id": "contract-server",
+        "entity_type": "virtual_machine",
+        "window": {
+          "start": "2026-10-09T09:00:00Z",
+          "end": "2026-10-09T09:05:00Z",
+          "size_sec": 300,
+          "slide_sec": 60
+        },
+        "features": {
+          "metrics": {
+            "cpu_mean_pct": 96,
+            "cpu_max_pct": 99,
+            "memory_mean_pct": 70,
+            "memory_max_pct": 75,
+            "latency_mean_ms": 50,
+            "latency_max_ms": 65,
+            "packet_loss_mean_ratio": 0.001,
+            "network_traffic_mean_mbps": 300,
+            "bandwidth_utilization_mean_pct": 30
+          },
+          "logs": {
+            "total_count": 7,
+            "total_per_minute": 1.4,
+            "error_count": 0,
+            "error_rate": 0,
+            "warn_count": 0,
+            "warn_rate": 0,
+            "info_count": 7,
+            "info_rate": 1,
+            "error_trace_match_ratio": 0
+          },
+          "traces": {
+            "span_count": 10,
+            "span_per_minute": 2,
+            "failed_span_count": 0,
+            "failed_span_per_minute": 0,
+            "span_error_rate": 0,
+            "avg_duration_ms": 80,
+            "max_duration_ms": 120
+          },
+          "alarms": {
+            "alarm_count": 0,
+            "alarm_per_minute": 0,
+            "critical_count": 0,
+            "critical_rate": 0,
+            "major_count": 0,
+            "major_rate": 0,
+            "minor_count": 0,
+            "minor_rate": 0
+          }
+        },
+        "quality": {
+          "status": "complete",
+          "metrics_status": "complete",
+          "logs_status": "complete",
+          "traces_status": "complete",
+          "alarms_status": "complete",
+          "sample_counts": {
+            "metrics": 10,
+            "logs": 7,
+            "spans": 10,
+            "alarms": 0
+          },
+          "missing_features": []
+        },
+        "context": {
+          "active_ticket_ids": [
+            "TEST-TICKET-1"
+          ],
+          "active_change_ids": [],
+          "maintenance_active": false,
+          "related_entity_ids": [
+            "contract-server",
+            "contract-database"
+          ]
+        },
+        "relation_statistics": {
+          "error_failed_trace_overlap_count": 0,
+          "matched_error_log_count": 0,
+          "matched_failed_span_count": 0,
+          "error_log_match_ratio": 0
+        },
+        "source_ref": {
+          "topic": "l1-aligned-windows",
+          "window_id": "WIN-CONTRACT-001",
+          "content_sha256": "5bd36fcc703bbab2741bad0f613ed1593410d9506fa5ea97a868c94748b08137"
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "record_type": "aligned_window",
+        "window_id": "WIN-CONTRACT-002",
+        "entity_id": "contract-server",
+        "entity_type": "virtual_machine",
+        "window": {
+          "start": "2026-10-09T09:01:00Z",
+          "end": "2026-10-09T09:06:00Z",
+          "size_sec": 300,
+          "slide_sec": 60
+        },
+        "features": {
+          "metrics": {
+            "cpu_mean_pct": 97,
+            "cpu_max_pct": 100,
+            "memory_mean_pct": 70,
+            "memory_max_pct": 75,
+            "latency_mean_ms": 50,
+            "latency_max_ms": 65,
+            "packet_loss_mean_ratio": 0.001,
+            "network_traffic_mean_mbps": 300,
+            "bandwidth_utilization_mean_pct": 30
+          },
+          "logs": {
+            "total_count": 7,
+            "total_per_minute": 1.4,
+            "error_count": 0,
+            "error_rate": 0,
+            "warn_count": 0,
+            "warn_rate": 0,
+            "info_count": 7,
+            "info_rate": 1,
+            "error_trace_match_ratio": 0
+          },
+          "traces": {
+            "span_count": 10,
+            "span_per_minute": 2,
+            "failed_span_count": 0,
+            "failed_span_per_minute": 0,
+            "span_error_rate": 0,
+            "avg_duration_ms": 80,
+            "max_duration_ms": 120
+          },
+          "alarms": {
+            "alarm_count": 0,
+            "alarm_per_minute": 0,
+            "critical_count": 0,
+            "critical_rate": 0,
+            "major_count": 0,
+            "major_rate": 0,
+            "minor_count": 0,
+            "minor_rate": 0
+          }
+        },
+        "quality": {
+          "status": "complete",
+          "metrics_status": "complete",
+          "logs_status": "complete",
+          "traces_status": "complete",
+          "alarms_status": "complete",
+          "sample_counts": {
+            "metrics": 10,
+            "logs": 7,
+            "spans": 10,
+            "alarms": 0
+          },
+          "missing_features": []
+        },
+        "context": {
+          "active_ticket_ids": [
+            "TEST-TICKET-1"
+          ],
+          "active_change_ids": [],
+          "maintenance_active": false,
+          "related_entity_ids": [
+            "contract-server",
+            "contract-database"
+          ]
+        },
+        "relation_statistics": {
+          "error_failed_trace_overlap_count": 0,
+          "matched_error_log_count": 0,
+          "matched_failed_span_count": 0,
+          "error_log_match_ratio": 0
+        },
+        "source_ref": {
+          "topic": "l1-aligned-windows",
+          "window_id": "WIN-CONTRACT-002",
+          "content_sha256": "4abe0d9f130d7202d057e44bb375d1a9d292d773efb566ac001f8541220eded7"
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "record_type": "aligned_window",
+        "window_id": "WIN-CONTRACT-003",
+        "entity_id": "contract-server",
+        "entity_type": "virtual_machine",
+        "window": {
+          "start": "2026-10-09T09:02:00Z",
+          "end": "2026-10-09T09:07:00Z",
+          "size_sec": 300,
+          "slide_sec": 60
+        },
+        "features": {
+          "metrics": {
+            "cpu_mean_pct": 98,
+            "cpu_max_pct": 100,
+            "memory_mean_pct": 70,
+            "memory_max_pct": 75,
+            "latency_mean_ms": 50,
+            "latency_max_ms": 65,
+            "packet_loss_mean_ratio": 0.001,
+            "network_traffic_mean_mbps": 300,
+            "bandwidth_utilization_mean_pct": 30
+          },
+          "logs": {
+            "total_count": 7,
+            "total_per_minute": 1.4,
+            "error_count": 0,
+            "error_rate": 0,
+            "warn_count": 0,
+            "warn_rate": 0,
+            "info_count": 7,
+            "info_rate": 1,
+            "error_trace_match_ratio": 0
+          },
+          "traces": {
+            "span_count": 10,
+            "span_per_minute": 2,
+            "failed_span_count": 0,
+            "failed_span_per_minute": 0,
+            "span_error_rate": 0,
+            "avg_duration_ms": 80,
+            "max_duration_ms": 120
+          },
+          "alarms": {
+            "alarm_count": 0,
+            "alarm_per_minute": 0,
+            "critical_count": 0,
+            "critical_rate": 0,
+            "major_count": 0,
+            "major_rate": 0,
+            "minor_count": 0,
+            "minor_rate": 0
+          }
+        },
+        "quality": {
+          "status": "complete",
+          "metrics_status": "complete",
+          "logs_status": "complete",
+          "traces_status": "complete",
+          "alarms_status": "complete",
+          "sample_counts": {
+            "metrics": 10,
+            "logs": 7,
+            "spans": 10,
+            "alarms": 0
+          },
+          "missing_features": []
+        },
+        "context": {
+          "active_ticket_ids": [
+            "TEST-TICKET-1"
+          ],
+          "active_change_ids": [],
+          "maintenance_active": false,
+          "related_entity_ids": [
+            "contract-server",
+            "contract-database"
+          ]
+        },
+        "relation_statistics": {
+          "error_failed_trace_overlap_count": 0,
+          "matched_error_log_count": 0,
+          "matched_failed_span_count": 0,
+          "error_log_match_ratio": 0
+        },
+        "source_ref": {
+          "topic": "l1-aligned-windows",
+          "window_id": "WIN-CONTRACT-003",
+          "content_sha256": "c445bf962bc925b6bffabdb83c3a4207216ec5e50d395ff25816f3c2571199b8"
+        }
+      }
+    ]
+  },
+  "l2_result": {
+    "anomaly": true,
+    "anomaly_type": "CPU_HIGH",
+    "severity": "major",
+    "start_time": "2026-10-09T09:00:00Z",
+    "end_time": "2026-10-09T09:07:00Z",
+    "detected_at": "2026-10-28T00:00:00Z",
+    "detection_sources": [
+      "FLINK_CEP"
+    ],
+    "matched_rules": [
+      "CEP_CPU_SUSTAINED"
+    ],
+    "matched_window_ids": [
+      "WIN-CONTRACT-001",
+      "WIN-CONTRACT-002",
+      "WIN-CONTRACT-003"
+    ],
+    "source_event_ids": [
+      "SRC-183AF36DD7EFA9AF8B3A"
+    ],
+    "evidence": {
+      "window_count": 3,
+      "max_cpu_pct": 98,
+      "max_memory_pct": 70,
+      "total_errors": 0,
+      "total_failed_spans": 0,
+      "matched_windows": [
+        {
+          "window_id": "WIN-CONTRACT-001",
+          "start_time": "2026-10-09T09:00:00Z",
+          "end_time": "2026-10-09T09:05:00Z",
+          "drools_markers": [
+            "CPU_HIGH"
+          ],
+          "cpu_mean_pct": 96,
+          "memory_mean_pct": 70,
+          "latency_mean_ms": 50,
+          "packet_loss_mean_ratio": 0.001,
+          "error_count": 0,
+          "error_rate": 0,
+          "failed_span_count": 0,
+          "span_failure_rate": 0,
+          "alarm_count": 0
+        },
+        {
+          "window_id": "WIN-CONTRACT-002",
+          "start_time": "2026-10-09T09:01:00Z",
+          "end_time": "2026-10-09T09:06:00Z",
+          "drools_markers": [
+            "CPU_HIGH"
+          ],
+          "cpu_mean_pct": 97,
+          "memory_mean_pct": 70,
+          "latency_mean_ms": 50,
+          "packet_loss_mean_ratio": 0.001,
+          "error_count": 0,
+          "error_rate": 0,
+          "failed_span_count": 0,
+          "span_failure_rate": 0,
+          "alarm_count": 0
+        },
+        {
+          "window_id": "WIN-CONTRACT-003",
+          "start_time": "2026-10-09T09:02:00Z",
+          "end_time": "2026-10-09T09:07:00Z",
+          "drools_markers": [
+            "CPU_HIGH"
+          ],
+          "cpu_mean_pct": 98,
+          "memory_mean_pct": 70,
+          "latency_mean_ms": 50,
+          "packet_loss_mean_ratio": 0.001,
+          "error_count": 0,
+          "error_rate": 0,
+          "failed_span_count": 0,
+          "span_failure_rate": 0,
+          "alarm_count": 0
+        },
+        {
+          "window_id": "WIN-CONTRACT-004",
+          "start_time": "2026-10-09T09:03:00Z",
+          "end_time": "2026-10-09T09:08:00Z",
+          "drools_markers": [],
+          "cpu_mean_pct": 30,
+          "memory_mean_pct": 70,
+          "latency_mean_ms": 50,
+          "packet_loss_mean_ratio": 0.001,
+          "error_count": 0,
+          "error_rate": 0,
+          "failed_span_count": 0,
+          "span_failure_rate": 0,
+          "alarm_count": 0
+        }
+      ]
+    },
+    "source_evidence": {
+      "FLINK_CEP": {
+        "window_count": 3,
+        "max_cpu_pct": 98,
+        "max_memory_pct": 70,
+        "total_errors": 0,
+        "total_failed_spans": 0,
+        "matched_windows": [
+          {
+            "window_id": "WIN-CONTRACT-001",
+            "start_time": "2026-10-09T09:00:00Z",
+            "end_time": "2026-10-09T09:05:00Z",
+            "drools_markers": [
+              "CPU_HIGH"
+            ],
+            "cpu_mean_pct": 96,
+            "memory_mean_pct": 70,
+            "latency_mean_ms": 50,
+            "packet_loss_mean_ratio": 0.001,
+            "error_count": 0,
+            "error_rate": 0,
+            "failed_span_count": 0,
+            "span_failure_rate": 0,
+            "alarm_count": 0
+          },
+          {
+            "window_id": "WIN-CONTRACT-002",
+            "start_time": "2026-10-09T09:01:00Z",
+            "end_time": "2026-10-09T09:06:00Z",
+            "drools_markers": [
+              "CPU_HIGH"
+            ],
+            "cpu_mean_pct": 97,
+            "memory_mean_pct": 70,
+            "latency_mean_ms": 50,
+            "packet_loss_mean_ratio": 0.001,
+            "error_count": 0,
+            "error_rate": 0,
+            "failed_span_count": 0,
+            "span_failure_rate": 0,
+            "alarm_count": 0
+          },
+          {
+            "window_id": "WIN-CONTRACT-003",
+            "start_time": "2026-10-09T09:02:00Z",
+            "end_time": "2026-10-09T09:07:00Z",
+            "drools_markers": [
+              "CPU_HIGH"
+            ],
+            "cpu_mean_pct": 98,
+            "memory_mean_pct": 70,
+            "latency_mean_ms": 50,
+            "packet_loss_mean_ratio": 0.001,
+            "error_count": 0,
+            "error_rate": 0,
+            "failed_span_count": 0,
+            "span_failure_rate": 0,
+            "alarm_count": 0
+          },
+          {
+            "window_id": "WIN-CONTRACT-004",
+            "start_time": "2026-10-09T09:03:00Z",
+            "end_time": "2026-10-09T09:08:00Z",
+            "drools_markers": [],
+            "cpu_mean_pct": 30,
+            "memory_mean_pct": 70,
+            "latency_mean_ms": 50,
+            "packet_loss_mean_ratio": 0.001,
+            "error_count": 0,
+            "error_rate": 0,
+            "failed_span_count": 0,
+            "span_failure_rate": 0,
+            "alarm_count": 0
+          }
+        ]
+      }
+    },
+    "merge_status": "SINGLE_SOURCE",
+    "decision_reason": "single detection branch candidate retained from FLINK_CEP",
+    "decision": {
+      "anomaly": true,
+      "suppressed": false,
+      "action": "ALERT",
+      "reason": "single detection branch candidate retained from FLINK_CEP"
+    },
+    "window_count": 3,
+    "quality_status": "complete",
+    "payload_quality": {
+      "snapshot_status": "COMPLETE",
+      "missing_window_ids": [],
+      "feature_warnings": [],
+      "snapshot_conflicts": [],
+      "snapshot_warnings": []
+    }
+  },
+  "l25_result": null,
+  "l4_result": null
+}

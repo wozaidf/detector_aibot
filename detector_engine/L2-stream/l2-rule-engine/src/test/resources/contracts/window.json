@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "record_type": "aligned_window",
+  "window_id": "WIN-CONTRACT-001",
+  "entity_id": "contract-server",
+  "entity_type": "virtual_machine",
+  "window": {"start":"2026-10-09T09:00:00Z","end":"2026-10-09T09:05:00Z","size_sec":300,"slide_sec":60},
+  "events": {"metrics":[],"logs":[],"traces":[],"alarms":[]},
+  "features": {
+    "metrics": {"cpu_mean_pct":96.0,"cpu_max_pct":99.0,"memory_mean_pct":70.0,"memory_max_pct":75.0,"latency_mean_ms":50.0,"latency_max_ms":65.0,"packet_loss_mean_ratio":0.001,"network_traffic_mean_mbps":300.0,"bandwidth_utilization_mean_pct":30.0},
+    "logs": {"total_count":7,"total_per_minute":1.4,"error_count":0,"error_rate":0.0,"warn_count":0,"warn_rate":0.0,"info_count":7,"info_rate":1.0,"error_trace_match_ratio":0.0},
+    "traces": {"span_count":10,"span_per_minute":2.0,"failed_span_count":0,"failed_span_per_minute":0.0,"span_error_rate":0.0,"avg_duration_ms":80.0,"max_duration_ms":120.0},
+    "alarms": {"alarm_count":0,"alarm_per_minute":0.0,"critical_count":0,"critical_rate":0.0,"major_count":0,"major_rate":0.0,"minor_count":0,"minor_rate":0.0}
+  },
+  "context": {"active_ticket_ids":["TEST-TICKET-1"],"active_change_ids":[],"maintenance_active":false,"related_entity_ids":["contract-server","contract-database"]},
+  "quality": {"status":"complete","metrics_status":"complete","logs_status":"complete","traces_status":"complete","alarms_status":"complete","sample_counts":{"metrics":10,"logs":7,"spans":10,"alarms":0},"missing_features":[]},
+  "fusion_features": {"window_level":{"feature_vector":{},"participating_types":["metrics","logs","traces"]},"key_level":{"relation_statistics":{"error_failed_trace_overlap_count":0,"matched_error_log_count":0,"matched_failed_span_count":0,"error_log_match_ratio":0.0},"relations":[]}}
+}

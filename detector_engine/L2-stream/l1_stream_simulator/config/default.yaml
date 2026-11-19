@@ -1,0 +1,14 @@
+{
+  "entity_count": 3,
+  "duration_hours": 6,
+  "start_time": "2026-10-09T09:00:00Z",
+  "window_size_sec": 300,
+  "slide_sec": 60,
+  "seed": 42,
+  "max_windows": 500,
+  "metric_interval_sec": 30,
+  "scenario_frequency": 1.0,
+  "anomaly_intensity": 1.0,
+  "scenario_duration_sec": 600,
+  "enabled_scenarios": ["cpu_sustained", "cpu_spike", "memory_growth", "network_degradation", "multi_metric", "log_anomaly", "trace_anomaly", "cross_type", "maintenance", "data_quality"]
+}

@@ -1,0 +1,30 @@
+{
+  "anomaly_distribution": {
+    "cpu_spike": 1,
+    "cpu_sustained": 3,
+    "cross_type": 1,
+    "data_quality": 1,
+    "log_anomaly": 1,
+    "maintenance": 1,
+    "memory_growth": 1,
+    "multi_metric": 1,
+    "network_degradation": 1,
+    "trace_anomaly": 1
+  },
+  "anomaly_scenario_count": 12,
+  "duration_hours": 6,
+  "entity_count": 3,
+  "raw_event_counts": {
+    "alarms": 35,
+    "logs": 718,
+    "metrics": 1010,
+    "traces": 1024
+  },
+  "raw_event_total": 2787,
+  "schema_version": "1.0",
+  "seed": 42,
+  "slide_sec": 60,
+  "start_time": "2026-10-09T09:00:00Z",
+  "window_count": 500,
+  "window_size_sec": 300
+}

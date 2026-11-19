@@ -1,0 +1,23 @@
+[project]
+name = "l4-jev"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "wozaidf", email = "2217957466@qq.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.28.1",
+    "kafka-python>=3.0.11",
+    "pydantic-settings>=2.16.1",
+    "psycopg[binary]>=3.2.9",
+    "typesafe-sdk>=0.7.4",
+    "laya>=0.4.21",
+]
+
+[project.scripts]
+l4-jev = "l4_jev:main"
+
+
+[tool.uv]
+package = false

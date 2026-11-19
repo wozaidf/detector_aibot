@@ -1,0 +1,100 @@
+{
+  "generator": "L1 simulator event_generator + window_builder + feature_calculator.calculate",
+  "feature_calculator": "C:\\Users\\15325\\Desktop\\L2+L2.5并行\\L2-stream\\l1_stream_simulator\\generator\\feature_calculator.py",
+  "entity_ids": [
+    "server-001",
+    "server-002",
+    "server-003"
+  ],
+  "window_size_sec": 300,
+  "slide_sec": 60,
+  "metric_interval_sec": 30,
+  "seed": 42,
+  "scenario_frequency": 1.0,
+  "scenario_duration_sec": 600,
+  "anomaly_intensity": 1.0,
+  "enabled_scenarios": [
+    "cpu_sustained",
+    "cpu_spike",
+    "memory_growth",
+    "network_degradation",
+    "multi_metric",
+    "log_anomaly",
+    "trace_anomaly",
+    "cross_type",
+    "maintenance",
+    "data_quality"
+  ],
+  "split_seeds": {
+    "train": 42,
+    "val": 43,
+    "test": 44
+  },
+  "label_policy": "L1 scenario interval overlaps the aligned window; train has scenarios disabled",
+  "feature_columns": [
+    "metrics_cpu_mean_pct",
+    "metrics_cpu_max_pct",
+    "metrics_memory_mean_pct",
+    "metrics_memory_max_pct",
+    "metrics_latency_mean_ms",
+    "metrics_latency_max_ms",
+    "metrics_packet_loss_mean_ratio",
+    "metrics_network_traffic_mean_mbps",
+    "metrics_bandwidth_utilization_mean_pct",
+    "logs_total_per_minute",
+    "logs_error_rate",
+    "logs_warn_rate",
+    "logs_info_rate",
+    "logs_error_trace_match_ratio",
+    "traces_span_per_minute",
+    "traces_failed_span_per_minute",
+    "traces_span_error_rate",
+    "traces_avg_duration_ms",
+    "traces_max_duration_ms",
+    "alarms_alarm_per_minute",
+    "alarms_critical_rate",
+    "alarms_major_rate",
+    "alarms_minor_rate"
+  ],
+  "count_normalization": "event counts divided by window_size_sec / 60; event category composition represented as rates",
+  "splits": {
+    "train": {
+      "rows": 14000,
+      "label_counts": {
+        "0": 14000
+      },
+      "entity_counts": {
+        "server-001": 4667,
+        "server-002": 4667,
+        "server-003": 4666
+      },
+      "csv_sha256": "09577e1191f86499a01f751c255842ef9f33eb65b621ba8f56af67f42f37fff9"
+    },
+    "val": {
+      "rows": 3000,
+      "label_counts": {
+        "0": 2832,
+        "1": 168
+      },
+      "entity_counts": {
+        "server-001": 1000,
+        "server-002": 1000,
+        "server-003": 1000
+      },
+      "csv_sha256": "8d845db10a6ffdbca3bfc58ba369b528eef46618bfbf39efb836c527c7dfa1da"
+    },
+    "test": {
+      "rows": 3000,
+      "label_counts": {
+        "0": 2816,
+        "1": 184
+      },
+      "entity_counts": {
+        "server-001": 1000,
+        "server-002": 1000,
+        "server-003": 1000
+      },
+      "csv_sha256": "15bba3ce448c12eccf43f869a4920173c42bc549cd6b26e7d2c5f963565e2a25"
+    }
+  }
+}
